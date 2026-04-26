@@ -4,6 +4,7 @@ from urllib.parse import parse_qs
 from config import tasks
 from depends import get_sfr_service
 from services.sfr import SFRService
+from aiohttp.client_exceptions import ContentTypeError
 
 router = APIRouter(tags=["rucaptcha"])
 
@@ -18,15 +19,18 @@ async def callback(
     request: Request,
     sfr_service: SFRService = Depends(get_sfr_service),
 ):
-    body = await request.body()
-    data = parse_qs(body.decode())
+    try:
+        body = await request.body()
+        data = parse_qs(body.decode())
 
-    task_id = data["id"][0]
-    captcha = data["code"][0]
+        task_id = data["id"][0]
+        captcha = data["code"][0]
 
-    task_data = tasks.pop(task_id)
-    print(task_data)
-    result = await sfr_service.get_regnum(task_data["inn"], task_data["captcha_id"], captcha)
+        task_data = tasks.pop(task_id)
+        print(task_data)
+        result = await sfr_service.get_regnum(task_data["inn"], task_data["captcha_id"], captcha)
 
 
-    print(result["regNum"])
+        print(result["regNum"])
+    except ContentTypeError as e:
+        print(f"Ошибка: {e}, возможно капча не подошла")
