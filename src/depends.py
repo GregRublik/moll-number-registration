@@ -2,6 +2,7 @@ from aiohttp import ClientSession
 
 from services.captcha import CaptchaService
 from services.sfr import SFRService
+from services.bitrix import BitrixContactsService
 
 from fastapi import Depends
 from config import SessionManager
@@ -19,4 +20,11 @@ def get_sfr_service(
 ) -> SFRService:
     return SFRService(
         http_session,
+    )
+
+def get_bitrix_contact_service(
+    http_session: ClientSession = Depends(SessionManager.get_session)
+) -> BitrixContactsService:
+    return BitrixContactsService(
+        http_session
     )

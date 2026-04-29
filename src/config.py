@@ -24,6 +24,11 @@ class CaptchaSettings(BaseSettings):
 
     model_config = SettingsConfigDict(env_prefix="RECAPTCHA_", env_file=".env", extra="ignore")
 
+class BitrixSettings(BaseSettings):
+    url: str
+    webhook_url: str
+
+    model_config = SettingsConfigDict(env_prefix="BITRIX_", env_file=".env", extra="ignore")
 
 
 class Settings(BaseSettings):
@@ -31,10 +36,12 @@ class Settings(BaseSettings):
     port: int
 
     captcha: CaptchaSettings
+    bitrix: BitrixSettings
 
     model_config = SettingsConfigDict(env_prefix="APP_", env_file=".env", extra="ignore")
 
 tasks = {}
 settings = Settings(
     captcha=CaptchaSettings(),
+    bitrix=BitrixSettings(),
 )
